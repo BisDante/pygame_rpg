@@ -36,7 +36,8 @@ class NewGame(Scene):
         self.attribute_list = ['name', 'max_hp', 'max_mana', 'attack', 'defense', 'intelligence', 'willpower', 'speed', 'agility', 'accuracy', 'luck']
         self.attribute_index = 0
         self.characters = [None, None, None, None]
-        self.warning = 0
+        self.warning = False
+        self.complete_party = False
         self.type_timer = 0
         self.type_limit = 200
 
@@ -46,15 +47,13 @@ class NewGame(Scene):
         title_rect = title.get_frect(center=(SCREEN_WIDTH / 2, 75))
         self.display.blit(title, title_rect)
 
-        w, h = 300, 200
+        w, h = 300, 175
         side_margin = 25
-        top_margin = 25
-        bottom_margin = 50
+        top_margin = 10
+        bottom_margin = 75
         div = pygame.FRect(side_margin,
                            title_rect.bottom + top_margin, SCREEN_WIDTH - 2 * side_margin,
                            SCREEN_HEIGHT - title_rect.bottom - bottom_margin)
-        
-        # pygame.draw.rect(self.display, BLACK, div, 4, 0)
 
         for row in range(NewGame.ROWS):
             for col in range(NewGame.COLS):
@@ -81,6 +80,15 @@ class NewGame(Scene):
                 if self.main_index['x'] == col and self.main_index['y'] == row:
                     select_icon_rect = SELECT_ICON.get_frect(center=(rect.left - side_margin, rect.centery))
                     self.display.blit(SELECT_ICON, select_icon_rect)
+
+        if self.complete_party:
+            text = self.gothic_font.render('Start Game', False, BLACK)
+            rect = text.get_frect(midtop=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8 * 7))
+            self.display.blit(text, rect)
+
+            if self.main_index['y'] >= NewGame.ROWS:
+                select_icon_rect = SELECT_ICON.get_frect(center=(rect.left - side_margin, rect.centery))
+                self.display.blit(SELECT_ICON, select_icon_rect)
 
     def create_new_character(self):
         self.display.fill(WHITE)
@@ -127,59 +135,73 @@ class NewGame(Scene):
             case _:
                 pass
 
-    def input(self, dt, input_event):
-        self.type_timer += dt
+    def input(self, event_list):
+        current_attrib = self.attribute_list[self.attribute_index]
+        for event in event_list:
+            if event.type == pygame.KEYDOWN and self.state == NewGame.CREATE_NEW and isinstance(self.character[current_attrib], str):
+                if event.key == pygame.K_BACKSPACE:
+                    self.character[current_attrib] = self.character[current_attrib][:-1]
+
+                elif event.unicode.isalnum() or event.unicode == ' ':
+                    self.character[current_attrib] += event.unicode 
+
+
         keys = pygame.key.get_just_pressed()
 
         if self.state == NewGame.MAIN:
             self.main_index['x'] = (self.main_index['x'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % NewGame.COLS
-            self.main_index['y'] = (self.main_index['y'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % NewGame.ROWS
+            if not self.complete_party:
+                self.main_index['y'] = (self.main_index['y'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % NewGame.ROWS
+            else:
+                self.main_index['y'] = (self.main_index['y'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % (NewGame.ROWS+1)
 
-            if keys[pygame.K_RETURN] or keys[pygame.K_SPACE]:
+            if keys[pygame.K_RETURN]:
                 character_index = self.main_index['x'] + self.main_index['y'] * 2
+                
                 if self.characters[character_index]:
                     self.remaining_points = 0
                     self.character = self.characters[character_index]
 
                 self.state = NewGame.CREATE_NEW
 
-        if self.state == NewGame.CREATE_NEW:
+        elif self.state == NewGame.CREATE_NEW:
             self.attribute_index = (self.attribute_index + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % len(self.attribute_list)
+            
             change_value = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
             if change_value > 0 and self.remaining_points <= 0 or change_value < 0 and self.remaining_points >= self.max_points:
                 change_value = 0
 
-            current_attrib = self.attribute_list[self.attribute_index]
-            if current_attrib == 'name':
-                if input_event:
-                    if input_event.key == pygame.K_BACKSPACE:
-                        self.character[current_attrib] = self.character[current_attrib][:-1]
-
-                    elif input_event.unicode.isalnum() or input_event.unicode == ' ':
-                        self.character[current_attrib] += input_event.unicode
-
-            elif current_attrib in ['max_hp', 'max_mana']:
+            if current_attrib in ['max_hp', 'max_mana']:
                 self.character[current_attrib] += change_value * 5
                 self.remaining_points -= change_value
-            else:
+            
+            elif not current_attrib == 'name':
                 self.character[current_attrib] += change_value
                 self.remaining_points -= change_value
 
-            if keys[pygame.K_SPACE]:
+            if keys[pygame.K_RETURN]:
                 if self.remaining_points > 0:
-                    self.warning = 1
+                    self.warning = True
 
                 else:
                     self.add_character(self.character.copy(), self.main_index['x'] + self.main_index['y'] * 2)
                     self.remaining_points = self.max_points
                     self.character = self.default_character.copy()
+                    self.warning = False
+
+                    self.complete_party = True
+                    for slot in self.characters:
+                        if not slot:
+                            self.complete_party = False
+                            break
+
                     self.state = NewGame.MAIN
 
     def add_character(self, character, slot):
         self.characters[slot] = character
 
-    def update(self, dt, input_event):
-        self.input(dt, input_event)
+    def update(self, dt, event_list):
+        self.input(event_list)
         return self
 
     def draw(self):

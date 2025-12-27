@@ -20,6 +20,8 @@ SAVE_FOLDER = os.path.join('data', 'save')
 
 # game settings
 PARTY_SIZE = 4
+CONFIRM = [pygame.K_RETURN, pygame.K_SPACE]
+CANCEL = [pygame.K_BACKSPACE, pygame.K_ESCAPE]
 
 # colors
 DARKBLUE = (6, 57, 112)

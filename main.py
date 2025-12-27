@@ -15,20 +15,15 @@ class Game:
 
     def run(self):
         running = True
-        input_event = None
         while running:
             dt = self.clock.tick(FPS)
-            for event in pygame.event.get():
+            event_list = pygame.event.get()
+            for event in event_list:
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    running = False
-                    sys.exit()
-
-                if event.type == pygame.KEYDOWN:
-                    input_event = event
+                    sys.exit(0)
                     
-            self.scene = self.scene.update(dt, input_event)
-            input_event = None
+            self.scene = self.scene.update(dt, event_list)
             self.scene.draw()
 
             pygame.display.update()
