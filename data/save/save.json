@@ -1,0 +1,71 @@
+{
+  "characters": [
+    {
+      "id": 0,
+      "name": "Name",
+      "level": 1,
+      "experience": 0,
+      "max_hp": 20,
+      "attack": 25,
+      "defense": 5,
+      "max_mana": 20,
+      "intelligence": 5,
+      "willpower": 5,
+      "speed": 5,
+      "agility": 5,
+      "accuracy": 5,
+      "luck": 5
+    },
+    {
+      "id": 1,
+      "name": "James",
+      "level": 1,
+      "experience": 0,
+      "max_hp": 20,
+      "attack": 6,
+      "defense": 9,
+      "max_mana": 25,
+      "intelligence": 8,
+      "willpower": 8,
+      "speed": 8,
+      "agility": 7,
+      "accuracy": 7,
+      "luck": 6
+    },
+    {
+      "id": 2,
+      "name": "PELADAO",
+      "level": 1,
+      "experience": 0,
+      "max_hp": 20,
+      "attack": 25,
+      "defense": 5,
+      "max_mana": 20,
+      "intelligence": 5,
+      "willpower": 5,
+      "speed": 5,
+      "agility": 5,
+      "accuracy": 5,
+      "luck": 5
+    },
+    {
+      "id": 3,
+      "name": "DESCONSTRUIDAO",
+      "level": 1,
+      "experience": 0,
+      "max_hp": 20,
+      "attack": 25,
+      "defense": 5,
+      "max_mana": 20,
+      "intelligence": 5,
+      "willpower": 5,
+      "speed": 5,
+      "agility": 5,
+      "accuracy": 5,
+      "luck": 5
+    }
+  ],
+  "inventory": [],
+  "money": [],
+  "map": "map1.tmx"
+}

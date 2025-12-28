@@ -1,6 +1,8 @@
 from settings import *
 from scene import *
 from new_game import NewGame
+from data_manager import *
+from map import Map
 
 class MainMenu(Scene):
     TITLE = 0
@@ -9,8 +11,9 @@ class MainMenu(Scene):
     LOAD_GAME = 3
     QUIT = 4
     
-    def __init__(self, display):
-        super().__init__(display)
+    def __init__(self, display, data):
+        super().__init__(display, data)
+
         self.gothic_small = pygame.font.Font(GOTHIC, 64)
         self.gothic_big = pygame.font.Font(GOTHIC, 128)
         self.normal_font = pygame.font.Font(None, 36)
@@ -63,7 +66,11 @@ class MainMenu(Scene):
                 self.display.blit(SELECT_ICON, select_icon_rect)
 
     def new_game(self):
-        return NewGame(self.display)
+        return NewGame(self.display, self.data)
+    
+    def load_game(self):
+        load_game(self.data)
+        return Map(load_map(self.data['map']), self.display, self.data)
     
     def quit(self):
         pygame.quit()
@@ -86,6 +93,7 @@ class MainMenu(Scene):
         self.input()
         match self.state:
             case MainMenu.NEW_GAME: return self.new_game()
+            case MainMenu.LOAD_GAME: return self.load_game()
             case MainMenu.QUIT: return self.quit()
         
         return self

@@ -1,8 +1,9 @@
 from settings import *
 
 class Scene:
-    def __init__(self, display):
+    def __init__(self, display, data):
         self.display = display
+        self.data = data
         self.enter()
 
     def input(self):

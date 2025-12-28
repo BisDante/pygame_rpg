@@ -1,6 +1,8 @@
 from settings import *
 from scene import *
 from actor import PlayerCharacter
+from data_manager import *
+from map import Map
 
 class NewGame(Scene):
     ROWS = 2
@@ -8,19 +10,24 @@ class NewGame(Scene):
 
     MAIN = 0
     CREATE_NEW = 1
+    START = 2
 
-    def __init__(self, display):
-        super().__init__(display)
+    def __init__(self, display, data):
+        super().__init__(display, data)
+        self.data = data
+        self.party = data['characters'] 
         self.state = NewGame.MAIN
         self.gothic_font = pygame.font.Font(GOTHIC, 48)
         self.normal_font = pygame.font.Font(None, 36)
         self.main_index = {'x': 0, 'y': 0}
 
+        self.give_id = 0
         self.max_points = self.remaining_points = 20
         self.default_character = {
-            'id': 0,
-            'name': 'SoEpic',
+            'id': None,
+            'name': 'Name',
             'level': 1,
+            'experience': 0,
             'max_hp': 20,
             'attack': 5,
             'defense': 5,
@@ -35,8 +42,7 @@ class NewGame(Scene):
         self.character = self.default_character.copy()
         self.attribute_list = ['name', 'max_hp', 'max_mana', 'attack', 'defense', 'intelligence', 'willpower', 'speed', 'agility', 'accuracy', 'luck']
         self.attribute_index = 0
-        self.characters = [None, None, None, None]
-        self.warning = False
+        self.warning = 0
         self.complete_party = False
         self.type_timer = 0
         self.type_limit = 200
@@ -62,7 +68,7 @@ class NewGame(Scene):
                 pygame.draw.rect(self.display, BLACK, rect, 4, 0)
 
                 character_index = col + row * 2
-                if not self.characters[character_index]:
+                if not self.party[character_index]:
                     name = self.gothic_font.render('Empty', False, BLACK)
                     name_rect = name.get_frect(center=rect.center)
                     self.display.blit(name, name_rect)
@@ -73,7 +79,7 @@ class NewGame(Scene):
                     player_icon_rect = player_icon.get_frect(center=(rect.centerx, rect.centery-20))
                     self.display.blit(player_icon, player_icon_rect)
 
-                    name = self.normal_font.render(f'{self.characters[character_index]['name']}', False, BLACK)
+                    name = self.normal_font.render(f'{self.party[character_index]['name']}', False, BLACK)
                     name_rect = name.get_frect(midtop=(rect.centerx, rect.centery + 20))
                     self.display.blit(name, name_rect)
 
@@ -132,6 +138,11 @@ class NewGame(Scene):
                 rect = text.get_frect(midtop=(SCREEN_WIDTH/2, attrib_rect.bottom + 10))
                 self.display.blit(text, rect)
 
+            case 2:
+                text = self.normal_font.render('You can\'t repeat the name', False, BLACK)
+                rect = text.get_frect(midtop=(SCREEN_WIDTH/2, attrib_rect.bottom + 10))
+                self.display.blit(text, rect)
+
             case _:
                 pass
 
@@ -145,7 +156,6 @@ class NewGame(Scene):
                 elif event.unicode.isalnum() or event.unicode == ' ':
                     self.character[current_attrib] += event.unicode 
 
-
         keys = pygame.key.get_just_pressed()
 
         if self.state == NewGame.MAIN:
@@ -156,13 +166,17 @@ class NewGame(Scene):
                 self.main_index['y'] = (self.main_index['y'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % (NewGame.ROWS+1)
 
             if keys[pygame.K_RETURN]:
-                character_index = self.main_index['x'] + self.main_index['y'] * 2
-                
-                if self.characters[character_index]:
-                    self.remaining_points = 0
-                    self.character = self.characters[character_index]
+                if self.main_index['y'] >= NewGame.ROWS:
+                    self.state = NewGame.START
 
-                self.state = NewGame.CREATE_NEW
+                else:
+                    character_index = self.main_index['x'] + self.main_index['y'] * 2
+                    
+                    if self.party[character_index]:
+                        self.remaining_points = 0
+                        self.character = self.party[character_index]
+
+                    self.state = NewGame.CREATE_NEW
 
         elif self.state == NewGame.CREATE_NEW:
             self.attribute_index = (self.attribute_index + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % len(self.attribute_list)
@@ -171,26 +185,39 @@ class NewGame(Scene):
             if change_value > 0 and self.remaining_points <= 0 or change_value < 0 and self.remaining_points >= self.max_points:
                 change_value = 0
 
-            if current_attrib in ['max_hp', 'max_mana']:
+            if (current_attrib in ['max_hp', 'max_mana'] and not
+                self.character[current_attrib] + change_value * 5 <
+                self.default_character[current_attrib]):
+
                 self.character[current_attrib] += change_value * 5
                 self.remaining_points -= change_value
             
-            elif not current_attrib == 'name':
+            elif (not current_attrib == 'name' and not
+                  self.character[current_attrib] + change_value <
+                  self.default_character[current_attrib]):
+                
                 self.character[current_attrib] += change_value
                 self.remaining_points -= change_value
 
             if keys[pygame.K_RETURN]:
                 if self.remaining_points > 0:
-                    self.warning = True
+                    self.warning = 1
+
+                elif self.character['name'] in [character['name'] for character in self.party if character and character['id'] != self.character['id']]:
+                    self.warning = 2
 
                 else:
+                    if not self.character['id']:
+                        self.character['id'] = self.give_id
+                        self.give_id += 1
+
                     self.add_character(self.character.copy(), self.main_index['x'] + self.main_index['y'] * 2)
                     self.remaining_points = self.max_points
                     self.character = self.default_character.copy()
                     self.warning = False
 
                     self.complete_party = True
-                    for slot in self.characters:
+                    for slot in self.party:
                         if not slot:
                             self.complete_party = False
                             break
@@ -198,10 +225,21 @@ class NewGame(Scene):
                     self.state = NewGame.MAIN
 
     def add_character(self, character, slot):
-        self.characters[slot] = character
+        self.party[slot] = character
+
+    def start_game(self):
+        create_save_data(self.party)
+        for i in range(len(self.party)):
+            self.party[i] = PlayerCharacter(self.party[i])
+
+        return Map(load_map('map1.tmx'), self.display)
 
     def update(self, dt, event_list):
         self.input(event_list)
+        
+        match self.state:
+            case NewGame.START: return self.start_game()
+
         return self
 
     def draw(self):

@@ -7,9 +7,14 @@ class Game:
     def __init__(self):
         pygame.init()
         self.display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption('Dungeons of Doom')
         self.convert_surfs()
-        self.scene = MainMenu(self.display)
-        # self.scene = Map(load_map('map1.tmx'), self.display)
+        
+        self.data = START_SAVE.copy()
+        self.data['actor_surfaces'] = {}
+        load_actor_surfaces(self.data)
+
+        self.scene = MainMenu(self.display, self.data)
         self.clock = pygame.time.Clock()
         self.run()
 
@@ -22,7 +27,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit(0)
-                    
+
             self.scene = self.scene.update(dt, event_list)
             self.scene.draw()
 

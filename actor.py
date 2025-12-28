@@ -14,8 +14,15 @@ class Actor:
         self.accuracy = attributes['accuracy']
         self.luck = attributes['luck']
 
+class Enemy(Actor):
+    def __init__(self, attributes):
+        super().__init__(attributes)
+
 class PlayerCharacter(Actor):
     def __init__(self, attributes):
         super().__init__(attributes)
-        self.hp = attributes['hp']
-        self.mana = attributes['mana']
+        if attributes.get('hp'):
+            self.hp = attributes['hp']
+        
+        if attributes.get('mana'):
+            self.mana = attributes['mana']

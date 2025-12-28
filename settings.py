@@ -20,8 +20,15 @@ SAVE_FOLDER = os.path.join('data', 'save')
 
 # game settings
 PARTY_SIZE = 4
+START_SAVE = {
+    'characters': [None for i in range(PARTY_SIZE)],
+    'inventory': [],
+    'money': [],
+    'map': 'map1.tmx'
+}
 CONFIRM = [pygame.K_RETURN, pygame.K_SPACE]
 CANCEL = [pygame.K_BACKSPACE, pygame.K_ESCAPE]
+START_MAP = os.path.join(MAP_FOLDER, 'map1.tmx')
 
 # colors
 DARKBLUE = (6, 57, 112)
