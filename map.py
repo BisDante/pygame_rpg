@@ -2,13 +2,21 @@ from settings import *
 from scene import *
 from battle import Battle
 from data_manager import *
+from random import randint
 
 class Map(Scene):
-    def __init__(self, map, display, data):
+    MAIN = 0
+    BATTLE = 1
+    DOOR = 2
+
+    def __init__(self, map, display, data, position=None):
         super().__init__(display, data)
         self.map = map
+        self.surfaces = self.data['actor_surfaces']
         self.special_tiles = []
         self.sprites = pygame.sprite.Group()
+        self.state = Map.MAIN
+
         obj_layer = self.map.get_layer_by_name('objects')
 
         for obj in obj_layer:
@@ -18,7 +26,10 @@ class Map(Scene):
             
             if obj.name == 'player':
                 self.player = sprite
-                self.player_position = {'x': obj.x // TILE_SIZE, 'y': obj.y // TILE_SIZE}
+                if position: self.player_position = position
+                else: self.player_position = {'x': obj.x // TILE_SIZE, 'y': obj.y // TILE_SIZE}
+                self.last_position = self.player_position.copy()
+                self.sprites.add(sprite)
 
             else:
                 self.special_tiles.append({
@@ -27,8 +38,6 @@ class Map(Scene):
                     'y': obj.y // TILE_SIZE,
                     'contains': obj.properties['contains']
                     })
-
-            self.sprites.add(sprite)
 
     def input(self, event_list):
         keys = pygame.key.get_just_pressed()
@@ -43,25 +52,63 @@ class Map(Scene):
             if props and props.get('type') != 'non_traversable':
                 self.player_position['x'] = desired_x
                 self.player_position['y'] = desired_y
-                self.player.rect.topleft = (self.player_position['x'] * TILE_SIZE, self.player_position['y'] * TILE_SIZE)
                 
-                return self.handle_tiles()
-        
-        return self
 
     def handle_tiles(self):
         for tile in self.special_tiles:
-            if tile['x'] == self.player_position['x'] and tile['y'] == self.player_position['y']:
-                if tile['type'] == 'door':
-                    return Map(load_map(tile['contains']), self.display, self.data)
+            tile_type = tile['type']
+            match tile_type:
+                case 'door':
+                    if tile['x'] == self.player_position['x'] and tile['y'] == self.player_position['y']:
+                        return Map(load_map(tile['contains']), self.display, self.data)
                 
-                elif tile['type'] == 'enemy':
-                    return Battle(self.display, self.data, tile['contains'])
+                case 'enemy':
+                    if tile['x'] == self.player_position['x'] and tile['y'] == self.player_position['y']:
+                        return Battle(self.display, self.data, tile['contains'])
+                    
+                    else:
+                        tile['x'], tile['y'] = self.pathfind(tile)
+                        if tile['x'] == self.player_position['x'] and tile['y'] == self.player_position['y']:
+                            self.special_tiles.remove(tile)
+                            return Battle(self.display, self.data, tile['contains'], self)
 
         return self
 
+    def pathfind(self, tile):
+        neighbors = [
+            {'x': tile['x']+1, 'y': tile['y'], 'distance': 1000},
+            {'x': tile['x']-1, 'y': tile['y'], 'distance': 1000},
+            {'x': tile['x'], 'y': tile['y']+1, 'distance': 1000},
+            {'x': tile['x'], 'y': tile['y']-1, 'distance': 1000}
+            ]
+        
+        smallest_distance = 999
+        for neighbor in neighbors:
+            props = self.map.get_tile_properties(neighbor['x'], neighbor['y'], 0)
+            if not props or props.get('type') == 'non_traversable':
+                neighbors.remove(neighbor)
+            
+            else:
+                neighbor['distance'] = abs(neighbor['x'] - self.player_position['x']) + abs(neighbor['y'] - self.player_position['y'])
+                if neighbor['distance'] <= smallest_distance: smallest_distance = neighbor['distance']
+        
+        for neighbor in neighbors:
+            if neighbor['distance'] > smallest_distance: neighbors.remove(neighbor)
+
+        chosen_tile = neighbors[randint(0, len(neighbors)-1)]
+        return (chosen_tile['x'], chosen_tile['y'])
+    
     def update(self, dt, event_list):
-        return self.input(event_list)
+        self.input(event_list)
+
+        if self.last_position != self.player_position:
+            self.last_position = self.player_position.copy()
+            return self.handle_tiles()
+
+        if self.state == Map.BATTLE:
+            pass
+
+        return self
 
     def draw(self):
         self.display.fill(DARKBLUE)
@@ -73,3 +120,9 @@ class Map(Scene):
 
                 for sprite in self.sprites.sprites():
                     self.display.blit(sprite.image, sprite.rect)
+
+                for tile in self.special_tiles:
+                    if self.surfaces.get(tile['type']):
+                        self.display.blit(self.surfaces[tile['type']], (tile['x'] * TILE_SIZE, tile['y'] * TILE_SIZE))
+
+        self.player.rect.topleft = (self.player_position['x'] * TILE_SIZE, self.player_position['y'] * TILE_SIZE)

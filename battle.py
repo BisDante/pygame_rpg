@@ -15,7 +15,7 @@ class Battle(Scene):
     WIN = 7
     LOSE = 8
 
-    def __init__(self, display, data, encounter, previous_scene=None):
+    def __init__(self, display, data, encounter_name='bats', previous_scene=None):
         super().__init__(display, data)
         
         # for helping display stuff
@@ -37,7 +37,7 @@ class Battle(Scene):
         # actual data
         self.previous_scene = previous_scene
         self.party = [PlayerCharacter(attributes) for attributes in data['characters']]
-        self.enemies = [Enemy(enemy) for enemy in encounter]
+        self.enemies = self.load_encounter(encounter_name)
         self.queue = sorted(self.party + self.enemies, key= lambda x: x.speed, reverse=True)
         self.turn_index = 0
 
@@ -58,8 +58,21 @@ class Battle(Scene):
         for enemy in self.enemies:
             self.surfaces[enemy.name] = data['actor_surfaces'][enemy.name]
 
-        #self.enemies = load_encounter(encounter)
         self.enemy_positions = self.set_enemy_positions()
+
+    def load_encounter(self, encounter_name):
+        ENCOUNTER_LIST = os.path.join('data', 'encounters.json')
+        ENEMY_LIST = os.path.join('data', 'enemies.json')
+        
+        with open(ENCOUNTER_LIST, 'r') as rf:
+            encounter_enemies = json.load(rf)[encounter_name]
+
+        with open(ENEMY_LIST, 'r') as rf2:
+            enemy_list = json.load(rf2)
+
+        enemy_data = [enemy_list[enemy] for enemy in encounter_enemies]
+        encounter=[Enemy(enemy) for enemy in enemy_data]
+        return encounter
 
     def set_enemy_positions(self):
         if len(self.enemies) <= 1:
@@ -115,6 +128,9 @@ class Battle(Scene):
         elif self.state == Battle.ENEMY_TURN:
             self.enemy_turn()
 
+        elif self.state == Battle.WIN:
+            return self.win()
+
         return self
     
     def player_turn(self):
@@ -123,11 +139,14 @@ class Battle(Scene):
         
         dead_before_index = 0
         enemies_alive = False
-        for i, actor in enumerate(self.queue):
-            if actor.hp <= 0:
-                if i < self.turn_index: dead_before_index += 1
-                self.queue.remove(actor)
-            else: enemies_alive = True
+        i = 0
+        while i < len(self.queue):
+            if self.queue[i].hp <= 0:
+                if i <= self.turn_index: dead_before_index += 1
+                self.queue.pop(i)
+                i = -1
+            elif isinstance(self.queue[i], Enemy): enemies_alive = True
+            i += 1
 
         if enemies_alive:
             self.select_enemy_index = 0
@@ -198,6 +217,12 @@ class Battle(Scene):
             if i == self.select_enemy_index:
                 rect = SELECT_ICON.get_frect(midright=(position.left, position.centery))
                 self.display.blit(SELECT_ICON, rect)
+
+    def win_screen(self):
+        pass
+
+    def win(self):
+        return self.previous_scene
 
     def draw(self):
         match self.state:

@@ -5,6 +5,7 @@ Test file for scene types.
 from settings import *
 from data_manager import *
 from battle import Battle
+from map import Map
 
 char1 = {
       "id": 0,
@@ -73,7 +74,7 @@ class TestGame:
         self.data['characters'] = characters
         self.data['actor_surfaces'] = load_actor_surfaces()
 
-        self.scene = Battle(self.display, self.data, enemies)
+        self.scene = Battle(self.display, self.data, 'knight', previous_scene=Map(load_map('map1.tmx'), self.display, self.data))
         self.clock = pygame.time.Clock()
         self.run()
 

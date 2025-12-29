@@ -1,0 +1,7 @@
+{
+  "bats": ["bat", "bat"],
+  "lots_of_bats": ["bat", "bat", "bat", "bat"],
+  "knight": ["knight"],
+  "knights": ["knight", "knight"],
+  "bats_and_knight": ["bat", "knight", "bat"]
+}

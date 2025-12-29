@@ -38,6 +38,12 @@ def load_actor_surfaces():
     
     return data
 
+def create_encounter():
+    pass
+
+def create_enemy():
+    pass
+
 def create_save_data(character_list, name='save.json'):
     path = os.path.join(SAVE_FOLDER, name)
     

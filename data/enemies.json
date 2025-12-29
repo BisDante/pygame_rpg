@@ -1,0 +1,34 @@
+{
+  "bat": {
+      "id": 0,
+      "name": "bat",
+      "level": 1,
+      "experience": 3,
+      "max_hp": 50,
+      "attack": 7,
+      "defense": 3,
+      "max_mana": 0,
+      "intelligence": 2,
+      "willpower": 2,
+      "speed": 7,
+      "agility": 10,
+      "accuracy": 5,
+      "luck": 3
+  },
+  "knight": {
+    "id": 1,
+    "name": "knight",
+    "level": 3,
+    "experience": 12,
+    "max_hp": 100,
+    "attack": 15,
+    "defense": 5,
+    "max_mana": 0,
+    "intelligence": 10,
+    "willpower": 5,
+    "speed": 3,
+    "agility": 0,
+    "accuracy": 10,
+    "luck": 10
+  }
+}
