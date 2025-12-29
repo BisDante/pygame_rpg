@@ -29,11 +29,14 @@ def load_encounter(name='bats'):
             enemies = [load_enemy(enemy_name) for enemy_name in encounter['enemies']]
             return enemies
 
-def load_actor_surfaces(data):
+def load_actor_surfaces():
+    data = {}
     for root, _, files in os.walk(ACTOR_FOLDER):
         for file in files:
             new_surf = pygame.image.load(os.path.join(root, file)).convert_alpha()
-            data['actor_surfaces'][file.split('.')[0]] = new_surf
+            data[file.split('.')[0]] = new_surf
+    
+    return data
 
 def create_save_data(character_list, name='save.json'):
     path = os.path.join(SAVE_FOLDER, name)

@@ -34,6 +34,8 @@ START_MAP = os.path.join(MAP_FOLDER, 'map1.tmx')
 DARKBLUE = (6, 57, 112)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (14, 205, 58)
 
 # fonts
 GOTHIC = os.path.join(FONT_FOLDER, 'OldLondon.ttf')
