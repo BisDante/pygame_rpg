@@ -54,9 +54,15 @@ class Battle(Scene):
                 'RUN': Battle.RUN
         }
 
+        self.blackboard = {
+            'turn_number': 0,
+            'players_alive': 0,
+            'enemies_alive': 0,
+        }
+
         self.surfaces = {}
         for enemy in self.enemies:
-            self.surfaces[enemy.name] = data['actor_surfaces'][enemy.name]
+            self.surfaces[enemy.name] = data['surfaces'][enemy.name]
 
         self.enemy_positions = self.set_enemy_positions()
 
@@ -167,15 +173,21 @@ class Battle(Scene):
             target.hp -= self.active_actor.attack
 
             dead_before_index = 0
-            for i, actor in enumerate(self.queue):
-                if actor.hp <= 0:
-                    if i < self.turn_index: dead_before_index += 1
-                    self.queue.remove(actor)
+            players_alive = False
+            i = 0
+            while i < len(self.queue):
+                if self.queue[i].hp <= 0:
+                    if i <= self.turn_index: dead_before_index += 1
+                    self.queue.pop(i)
+                    i = -1
+                elif isinstance(self.queue[i], PlayerCharacter): players_alive = True
+                i += 1
 
-            self.turn_index = (self.turn_index + 1) % len(self.queue) - dead_before_index
-            self.active_actor = self.queue[self.turn_index]
+                self.turn_index = (self.turn_index + 1) % len(self.queue) - dead_before_index
+                self.active_actor = self.queue[self.turn_index]
 
-        self.state = Battle.MAIN
+        if not players_alive: self.statee = Battle.LOSE
+        else: self.state = Battle.MAIN
 
     def main(self):
         self.display.fill(WHITE)

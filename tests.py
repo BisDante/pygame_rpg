@@ -72,9 +72,10 @@ class TestGame:
         
         self.data = START_SAVE.copy()
         self.data['characters'] = characters
-        self.data['actor_surfaces'] = load_actor_surfaces()
+        self.data['surfaces'] = load_surfaces()
 
-        self.scene = Battle(self.display, self.data, 'knight', previous_scene=Map(load_map('map1.tmx'), self.display, self.data))
+        #self.scene = Battle(self.display, self.data, 'knight', previous_scene=Map(load_map('map1.tmx'), self.display, self.data))
+        self.scene = Map(load_map('map1.tmx'), self.display, self.data)
         self.clock = pygame.time.Clock()
         self.run()
 

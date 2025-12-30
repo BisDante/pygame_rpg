@@ -13,30 +13,15 @@ def load_game(data, name='save.json'):
     for key in read.keys():
             data[key] = read[key]
 
-def load_enemy(name='bat'):
-    with open(os.path.join('data', 'enemies', 'enemies.json')) as rf:
-        read = json.load(rf)
-    
-    for enemy in read:
-        if enemy['name'] == name: return Enemy(enemy)
-
-def load_encounter(name='bats'):
-    with open(os.path.join('data', 'enemies', 'encounters.json')) as rf:
-        read = json.load(rf)
-    
-    for encounter in read:
-        if encounter['name'] == name:
-            enemies = [load_enemy(enemy_name) for enemy_name in encounter['enemies']]
-            return enemies
-
-def load_actor_surfaces():
-    data = {}
-    for root, _, files in os.walk(ACTOR_FOLDER):
-        for file in files:
-            new_surf = pygame.image.load(os.path.join(root, file)).convert_alpha()
-            data[file.split('.')[0]] = new_surf
-    
-    return data
+def load_surfaces():
+    surfaces = {}
+        
+    for root, dirs, files in os.walk('images'):
+        for filename in files:
+            new_surf = pygame.image.load(os.path.join(root, filename)).convert_alpha()
+            surfaces[filename.split('.')[0]] = new_surf
+       
+    return surfaces
 
 def create_encounter():
     pass
@@ -51,3 +36,6 @@ def create_save_data(character_list, name='save.json'):
     new_save['characters'] = character_list
     with open (path, 'w') as wf:
         json.dump(new_save, wf, indent=2)
+
+if __name__ == '__main__':
+    load_surfaces()

@@ -12,7 +12,7 @@ class Map(Scene):
     def __init__(self, map, display, data, position=None):
         super().__init__(display, data)
         self.map = map
-        self.surfaces = self.data['actor_surfaces']
+        self.surfaces = self.data['surfaces']
         self.special_tiles = []
         self.sprites = pygame.sprite.Group()
         self.state = Map.MAIN
