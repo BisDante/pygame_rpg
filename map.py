@@ -74,29 +74,39 @@ class Map(Scene):
 
         return self
 
-    def pathfind(self, tile):
-        neighbors = [
-            {'x': tile['x']+1, 'y': tile['y'], 'distance': 1000},
-            {'x': tile['x']-1, 'y': tile['y'], 'distance': 1000},
-            {'x': tile['x'], 'y': tile['y']+1, 'distance': 1000},
-            {'x': tile['x'], 'y': tile['y']-1, 'distance': 1000}
-            ]
-        
-        smallest_distance = 999
-        for neighbor in neighbors:
-            props = self.map.get_tile_properties(neighbor['x'], neighbor['y'], 0)
-            if not props or props.get('type') == 'non_traversable':
-                neighbors.remove(neighbor)
-            
-            else:
-                neighbor['distance'] = abs(neighbor['x'] - self.player_position['x']) + abs(neighbor['y'] - self.player_position['y'])
-                if neighbor['distance'] <= smallest_distance: smallest_distance = neighbor['distance']
-        
-        for neighbor in neighbors:
-            if neighbor['distance'] > smallest_distance: neighbors.remove(neighbor)
+    def pathfind(self, curr_tile):
+        h = abs(curr_tile['x'] - self.player_position['x']) + abs(curr_tile['y'] - self.player_position['y'])
+        open = [{'x': curr_tile['x'],
+                 'y': curr_tile['y'],
+                 'h': h,
+                 'g': 0,
+                 'f': h
+                 }]
+        closed = []
 
-        chosen_tile = neighbors[randint(0, len(neighbors)-1)]
-        return (chosen_tile['x'], chosen_tile['y'])
+        while open:
+            search = open[0]
+            for tile in open:
+                if tile['f'] < search['f'] or tile['f'] == search['f'] and tile['h'] < search['h']:
+                    search = tile
+
+            open.remove(search)
+            closed.append(search)
+
+            if search['x'] == self.player_position['x'] and search['y'] == self.player_position['y']:
+                return
+            
+            neighbors = [
+                {'x': search['x'] + 1, 'y': search['y']},
+                {'x': search['x'] -1, 'y': search['y']},
+                {'x': search['x'], 'y': search['y'] + 1},
+                {'x': search['x'], 'y': search['y'] - 1}
+                ]
+            for neighbor in neighbors:
+                props = self.map.get_tile_properties(neighbor['x'], neighbor['y'], 0)
+                if props and props.get('type') != 'non_traversable':
+
+
     
     def update(self, dt, event_list):
         self.input(event_list)

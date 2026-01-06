@@ -2,6 +2,7 @@ from settings import *
 from data_manager import *
 from main_menu import MainMenu
 from map import Map
+from actor import *
 
 class Game:
     def __init__(self):
@@ -11,9 +12,7 @@ class Game:
         self.convert_surfs()
         
         self.data = START_SAVE.copy()
-        self.data['actor_surfaces'] = {}
-        load_actor_surfaces(self.data)
-
+        self.data['surfaces'] = load_surfaces()
         self.scene = MainMenu(self.display, self.data)
         self.clock = pygame.time.Clock()
         self.run()

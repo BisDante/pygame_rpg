@@ -69,7 +69,7 @@ class MainMenu(Scene):
         return NewGame(self.display, self.data)
     
     def load_game(self):
-        load_game(self.data)
+        self.data = load_game()
         return Map(load_map(self.data['map']), self.display, self.data)
     
     def quit(self):
@@ -89,7 +89,7 @@ class MainMenu(Scene):
             if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]:
                 self.state = self.main_states[self.main_index]
 
-    def update(self, dt, input):
+    def update(self, dt, input) -> Scene:
         self.input()
         match self.state:
             case MainMenu.NEW_GAME: return self.new_game()
