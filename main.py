@@ -1,11 +1,10 @@
 from settings import *
 from data_manager import *
 from main_menu import MainMenu
-from map import Map
 from actor import *
 
 class Game:
-    def __init__(self):
+    def __init__(self, scene=None):
         pygame.init()
         self.display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Dungeons of Doom')
@@ -13,9 +12,8 @@ class Game:
         
         self.data = START_SAVE.copy()
         self.data['surfaces'] = load_surfaces()
-        self.scene = MainMenu(self.display, self.data)
+        self.scene = scene if scene else MainMenu(self.display, self.data)
         self.clock = pygame.time.Clock()
-        self.run()
 
     def run(self):
         running = True
@@ -37,4 +35,6 @@ class Game:
         SELECT_ICON = SELECT_ICON.convert_alpha()
         PLAYER_ICON = PLAYER_ICON.convert_alpha()
 
-game = Game()
+if __name__ == "__main__":
+    game = Game()
+    game.run()
