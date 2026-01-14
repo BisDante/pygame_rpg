@@ -193,7 +193,6 @@ class Battle(Scene):
     def main(self):
         self.display.fill(WHITE)
         pygame.draw.rect(self.display, BLACK, self.MAIN_DIV, 4, 0)
-        pygame.draw.rect(self.display, RED, self.NAME_DATA_DIV, 4, 0)
 
         for i, enemy in enumerate(self.enemies):
             if enemy.hp > 0:

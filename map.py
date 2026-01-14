@@ -81,7 +81,7 @@ class Map(Scene):
         obj_layer = self.map.get_layer_by_name('objects')
 
         for x, y, gid in floor_layer:
-            tile = Tile(x, y, map.get_tile_image_by_gid(gid), False if map.get_tile_properties_by_gid(gid).get('type') == 'non-traversable' else True, self.sprites)
+            tile = Tile(x, y, map.get_tile_image_by_gid(gid), False if map.get_tile_properties_by_gid(gid).get('type') == 'non_traversable' else True, self.sprites)
             self.grid[y][x] = tile
 
         for obj in obj_layer:
@@ -117,7 +117,12 @@ class Map(Scene):
                     if self.player.get_position() == tile.get_position():
                         tile.kill()
                         return tile.trigger(self.display, self.data, self)
+
                     self.pathfind(tile, self.player)
+
+                    if self.player.get_position() == tile.get_position():
+                        tile.kill()
+                        return tile.trigger(self.display, self.data, self)
 
                 case DoorTile():
                     if self.player.get_position() == tile.get_position():
@@ -174,7 +179,7 @@ class Map(Scene):
                 x_pos = tile.x + j - 1
                 y_pos = tile.y + i - 1
                 props = self.map.get_tile_properties(x_pos, y_pos, 0) if x_pos > 0 and y_pos > 0 and x_pos < self.map.width and y_pos < self.map.height else None
-                if abs(i - j) != 1 or not props or props.get('type') == 'non-traversable':
+                if abs(i - j) != 1 or not props or props.get('type') == 'non_traversable':
                     continue
 
                 neighbors.append(self.grid[y_pos][x_pos])
@@ -184,7 +189,7 @@ class Map(Scene):
     def trace_path(self, start_pos, target_pos):
         current = target_pos
         while not current.parent is start_pos:
-            current = current.parentprint
+            current = current.parent
         
         return current
 

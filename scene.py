@@ -20,4 +20,3 @@ class Scene:
 
     def exit(self):
         pass
-
