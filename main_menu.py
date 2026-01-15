@@ -69,8 +69,8 @@ class MainMenu(Scene):
         return NewGame(self.display, self.data)
     
     def load_game(self):
-        self.data = load_game()
-        return Map(load_map(self.data['map']), self.display, self.data)
+        self.data['characters'] = load_game()['characters']
+        return Map(load_map(self.data['maps'].root.data.name), self.display, self.data)
     
     def quit(self):
         pygame.quit()
