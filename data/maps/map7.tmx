@@ -26,9 +26,9 @@
  <objectgroup id="2" name="objects">
   <object id="1" type="door" gid="3" x="736" y="32" width="32" height="32"/>
   <object id="2" type="door" gid="3" x="736" y="576" width="32" height="32"/>
-  <object id="3" gid="5" x="704" y="64" width="32" height="32"/>
-  <object id="4" gid="5" x="736" y="64" width="32" height="32"/>
-  <object id="5" gid="4" x="32" y="64" width="32" height="32"/>
+  <object id="3" type="enemy" gid="5" x="704" y="64" width="32" height="32"/>
+  <object id="4" type="enemy" gid="5" x="736" y="64" width="32" height="32"/>
+  <object id="5" type="player" gid="4" x="32" y="64" width="32" height="32"/>
   <object id="6" gid="3" x="0" y="64" width="32" height="32"/>
  </objectgroup>
 </map>
