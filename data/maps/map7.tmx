@@ -29,6 +29,6 @@
   <object id="3" type="enemy" gid="5" x="704" y="64" width="32" height="32"/>
   <object id="4" type="enemy" gid="5" x="736" y="64" width="32" height="32"/>
   <object id="5" type="player" gid="4" x="32" y="64" width="32" height="32"/>
-  <object id="6" gid="3" x="0" y="64" width="32" height="32"/>
+  <object id="6" type="door" gid="3" x="0" y="64" width="32" height="32"/>
  </objectgroup>
 </map>

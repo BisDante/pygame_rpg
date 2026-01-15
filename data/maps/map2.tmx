@@ -24,7 +24,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="1" name="enemy" type="enemy" gid="5" x="224" y="416" width="32" height="32">
+  <object id="1" type="enemy" gid="5" x="224" y="416" width="32" height="32">
    <properties>
     <property name="contains" value="bats"/>
    </properties>
@@ -49,6 +49,6 @@
     <property name="contains" value="map5.tmx"/>
    </properties>
   </object>
-  <object id="6" name="player" type="player" gid="4" x="32" y="160" width="32" height="32"/>
+  <object id="6" type="player" gid="4" x="32" y="160" width="32" height="32"/>
  </objectgroup>
 </map>
