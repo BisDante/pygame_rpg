@@ -2,7 +2,6 @@ from settings import *
 from scene import *
 from battle import Battle
 from data_manager import *
-from random import randint
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, x, y, surf, traversable, groups):
