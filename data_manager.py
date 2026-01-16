@@ -169,13 +169,12 @@ class MapTree:
         
     def remove(self, root, id):
         if not root:
-            root = None
-            return root
+            return None
         
-        elif id < root.id:
+        elif id < root.data.id:
             root.left = self.remove(root.left, id)
 
-        elif id > root.id:
+        elif id > root.data.id:
             root.right = self.remove(root.right, id)
 
         elif root.right:
