@@ -207,7 +207,8 @@ class MapTree:
         map_list = []
         for root, dirs, files in os.walk(os.path.join('data', 'maps')):
             for filename in files:
-                map_list.append(MapData(filename, 0))
+                if filename.split('.')[1] == 'tmx':
+                    map_list.append(MapData(filename, 0))
 
         map_ids = sample(range(len(map_list)), len(map_list))
         
