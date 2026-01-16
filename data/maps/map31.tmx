@@ -24,7 +24,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="1" gid="4" x="736" y="64" width="32" height="32"/>
+  <object id="1" type="player" gid="4" x="736" y="64" width="32" height="32"/>
   <object id="2" type="door" gid="3" x="768" y="64" width="32" height="32"/>
   <object id="3" type="door" gid="3" x="0" y="64" width="32" height="32"/>
   <object id="4" type="door" gid="3" x="0" y="544" width="32" height="32"/>
