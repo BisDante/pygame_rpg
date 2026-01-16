@@ -70,6 +70,11 @@ class Map(Scene):
 
     def __init__(self, map, display, data, position=None):
         super().__init__(display, data)
+        
+        print(self.data['maps'].current.data)
+        if self.data['maps'].current.left: print(f"left: {self.data['maps'].current.left.data}")
+        if self.data['maps'].current.right: print(f"right: {self.data['maps'].current.right.data}\n")
+
         self.map = map
         self.grid = [[0 for _ in range(map.width)] for _ in range(map.height)]
         self.surfaces = self.data['surfaces']
