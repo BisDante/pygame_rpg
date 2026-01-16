@@ -108,11 +108,11 @@ class Map(Scene):
             if door is nearest_door:
                 door.contains = self.data['last_map']
             
-            elif not has_assigned_left:
+            elif not has_assigned_left and self.data['maps'].current.left:
                 door.contains = self.data['maps'].current.left.data.name
                 has_assigned_left = True
             
-            else:
+            elif self.data['maps'].current.left:
                 door.contains = self.data['maps'].current.right.data.name
 
     def input(self, event_list):
