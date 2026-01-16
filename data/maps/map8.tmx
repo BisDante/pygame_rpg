@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="7">
  <tileset firstgid="1" source="../../../../../Tiled/placeholder.tsx"/>
+ <tileset firstgid="7" source="placeholder.tsx"/>
  <layer id="1" name="floor" width="25" height="18">
   <data encoding="csv">
 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
@@ -12,7 +13,7 @@
 2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,2,
 2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,2,
 2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,
-1,1,2,2,2,2,2,2,2,2,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,
+8,1,2,2,2,2,2,2,2,2,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,
 2,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,2,
 2,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,2,
 2,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,2,
@@ -25,10 +26,10 @@
  </layer>
  <objectgroup id="2" name="objects">
   <object id="1" type="enemy" gid="5" x="736" y="64" width="32" height="32"/>
-  <object id="2" gid="5" x="736" y="544" width="32" height="32"/>
+  <object id="2" type="enemy" gid="5" x="736" y="544" width="32" height="32"/>
   <object id="3" type="door" gid="3" x="0" y="320" width="32" height="32"/>
   <object id="4" type="door" gid="3" x="768" y="160" width="32" height="32"/>
-  <object id="5" gid="3" x="768" y="448" width="32" height="32"/>
+  <object id="5" type="door" gid="3" x="768" y="448" width="32" height="32"/>
   <object id="6" type="player" gid="4" x="32" y="320" width="32" height="32"/>
  </objectgroup>
 </map>

@@ -13,6 +13,7 @@ class Game:
         self.data = START_SAVE.copy()
         self.data['surfaces'] = load_surfaces()
         self.data['maps'] = MapTree()
+        self.data['last_map'] = None
         self.scene = scene if scene else MainMenu(self.display, self.data)
         self.clock = pygame.time.Clock()
 

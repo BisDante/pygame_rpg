@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="22">
- <tileset firstgid="1" source="../../../../../Tiled/placeholder.tsx"/>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="23">
+ <tileset firstgid="1" source="placeholder.tsx"/>
  <layer id="1" name="floor" width="25" height="18">
   <data encoding="csv">
 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
@@ -39,6 +39,7 @@
     <property name="contains" value="bats"/>
    </properties>
   </object>
-  <object id="20" name="player" type="player" gid="4" x="32" y="64" width="32" height="32"/>
+  <object id="20" type="player" gid="4" x="32" y="64" width="32" height="32"/>
+  <object id="22" gid="3" x="0" y="64" width="32" height="32"/>
  </objectgroup>
 </map>

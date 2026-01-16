@@ -61,8 +61,11 @@ class MapTree:
     def __init__(self):
         self.root = None
         map_list = self.get_map_list()
+        
         for map in map_list:
             self.root = self.insert(self.root, Node(map))
+        
+        self.current = self.root
 
     def get_height(self, node):
         if node:
@@ -127,7 +130,7 @@ class MapTree:
         if root.left:
             self.in_order(root.left)
         
-        print(root.data)
+        print(f"{root.data} height:{root.height}")
         
         if root.right:
             self.in_order(root.right)

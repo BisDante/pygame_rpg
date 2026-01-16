@@ -51,7 +51,8 @@ class EnemyTile(Tile):
         self.contains = contains
 
     def trigger(self, display, data, previous_scene):
-        return Battle(display, data, previous_scene, self.contains)
+        if self.contains: return Battle(display, data, previous_scene, self.contains)
+        else: return Battle(display, data, previous_scene, 'bats')
     
 class DoorTile(Tile):
     def __init__(self, x, y, surf, groups, traversable, contains):
@@ -83,16 +84,36 @@ class Map(Scene):
             tile = Tile(x, y, map.get_tile_image_by_gid(gid), False if map.get_tile_properties_by_gid(gid).get('type') == 'non_traversable' else True, self.sprites)
             self.grid[y][x] = tile
 
+        doors = []
         for obj in obj_layer:
             if obj.type == 'player':
                 self.player = Player(obj.x//TILE_SIZE, obj.y//TILE_SIZE, obj.image, True, self.sprites)
 
             elif obj.type == 'door':
-                DoorTile(obj.x//TILE_SIZE, obj.y//TILE_SIZE, obj.image, (self.sprites, self.special_tiles), True, obj.properties.get('contains'))
+                new_door = DoorTile(obj.x//TILE_SIZE, obj.y//TILE_SIZE, obj.image, (self.sprites, self.special_tiles), True, None)
+                doors.append(new_door)
 
             elif obj.type == 'enemy':
                 EnemyTile(obj.x//TILE_SIZE, obj.y//TILE_SIZE, obj.image, (self.sprites, self.special_tiles), False, obj.properties.get('contains'))
 
+        door_dist = 1000
+        has_assigned_left = False
+        nearest_door = None
+        for door in doors:
+            if door_dist < self.tile_distance(door, self.player):
+                nearest_door = door
+                door_dist = self.tile_distance(door, self.player)
+
+        for door in doors:
+            if door is nearest_door:
+                door.contains = self.data['last_map']
+            
+            elif not has_assigned_left:
+                door.contains = self.data['maps'].current.left.data.name
+                has_assigned_left = True
+            
+            else:
+                door.contains = self.data['maps'].current.right.data.name
 
     def input(self, event_list):
         keys = pygame.key.get_just_pressed()
@@ -124,7 +145,13 @@ class Map(Scene):
                         return tile.trigger(self.display, self.data, self)
 
                 case DoorTile():
+                    self.data['last_map'] = self.data['maps'].current.data.name
                     if self.player.get_position() == tile.get_position():
+                        if tile.contains == self.data['maps'].current.left.data.name:
+                            self.data['maps'].current = self.data['maps'].current.left
+                        else:
+                            self.data['maps'].current = self.data['maps'].current.right
+
                         return tile.trigger(self.display, self.data)
 
         return self
